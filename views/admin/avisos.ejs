@@ -1,0 +1,51 @@
+<%- include('_topo', { tituloAdmin: 'Avisos' }) %>
+<h1>Avisos</h1>
+<p class="intro">O quadro de avisos aparece ao lado do texto de abertura da página inicial, com os 3 avisos mais recentes. Avisos com “mostrar até” vencido saem sozinhos do site.</p>
+
+<form method="post" action="/admin/avisos/quadro" class="formulario linha">
+  <input type="hidden" name="_csrf" value="<%= csrf %>">
+  <label class="caixa"><input type="checkbox" name="avisos_ativo" value="1" <%= cfg.avisos_ativo === '1' ? 'checked' : '' %>> Mostrar o quadro de avisos na página inicial</label>
+  <button class="botao contorno">Salvar</button>
+</form>
+
+<section class="painel-secao">
+  <h2><%= a.id ? 'Editar aviso' : 'Novo aviso' %></h2>
+  <% if (erros.length) { %><div class="aviso erro" role="alert"><% for (const e of erros) { %><p><%= e %></p><% } %></div><% } %>
+  <form method="post" action="<%= a.id ? `/admin/avisos/${a.id}` : '/admin/avisos' %>" class="formulario">
+    <input type="hidden" name="_csrf" value="<%= csrf %>">
+    <label>Título<input name="titulo" value="<%= a.titulo || '' %>" maxlength="120" required placeholder="Chamada aberta para a Carta FoMerco"></label>
+    <label>Texto curto <small>opcional, até 400 caracteres</small><textarea name="texto" rows="3" maxlength="400"><%= a.texto || '' %></textarea></label>
+    <div class="duas">
+      <label>Link <small>opcional: https://..., mailto: ou /pagina</small><input name="link" value="<%= a.link || '' %>" maxlength="500"></label>
+      <label>Texto do link <small>padrão: “Saiba mais”</small><input name="rotulo_link" value="<%= a.rotulo_link || '' %>" maxlength="40"></label>
+    </div>
+    <div class="duas">
+      <label>Data do aviso <small>em branco: hoje</small><input name="data" type="date" value="<%= a.data || '' %>"></label>
+      <label>Mostrar até <small>opcional; depois disso o aviso sai do site</small><input name="mostrar_ate" type="date" value="<%= a.mostrar_ate || '' %>"></label>
+    </div>
+    <div class="barra"><button class="botao"><%= a.id ? 'Salvar alterações' : 'Publicar aviso' %></button><% if (a.id) { %> <a class="botao contorno" href="/admin/avisos">Cancelar</a><% } %></div>
+  </form>
+</section>
+
+<section class="painel-secao">
+  <h2>Todos os avisos</h2>
+  <% if (!avisos.length) { %><p class="vazio">Nenhum aviso ainda.</p><% } else { %>
+  <table class="tabela">
+    <thead><tr><th>Data</th><th>Título</th><th>Situação</th><th>Ações</th></tr></thead>
+    <tbody>
+    <% for (const x of avisos) { const vencido = x.mostrar_ate && x.mostrar_ate < hoje; %>
+      <tr>
+        <td><%= formatarData(x.data) %></td>
+        <td><%= x.titulo %></td>
+        <td><span class="etiqueta <%= vencido ? 'rasc' : 'pub' %>"><%= vencido ? 'Vencido' : (x.mostrar_ate ? `Até ${formatarData(x.mostrar_ate)}` : 'No ar') %></span></td>
+        <td class="acoes-tabela"><a href="/admin/avisos/<%= x.id %>">Editar</a>
+          <details class="excluir"><summary>Excluir</summary>
+            <form method="post" action="/admin/avisos/<%= x.id %>/excluir"><input type="hidden" name="_csrf" value="<%= csrf %>"><button class="botao vermelho">Confirmar exclusão</button></form>
+          </details></td>
+      </tr>
+    <% } %>
+    </tbody>
+  </table>
+  <% } %>
+</section>
+<%- include('_fim') %>

@@ -1,0 +1,25 @@
+<%- include('_topo', { tituloAdmin: 'Página inicial e contato' }) %>
+<h1>Página inicial e contato</h1>
+<% if (erro) { %><p class="aviso erro" role="alert"><%= erro %></p><% } %>
+<form method="post" class="formulario">
+  <input type="hidden" name="_csrf" value="<%= csrf %>">
+  <fieldset>
+    <legend>Abertura da página inicial</legend>
+    <label>Nome por extenso <small>aparece logo abaixo do logo</small><input name="hero_titulo" value="<%= cfg.hero_titulo %>" maxlength="160"></label>
+    <label>Texto de apresentação<textarea name="hero_texto" rows="4" maxlength="1200"><%= cfg.hero_texto %></textarea></label>
+  </fieldset>
+  <fieldset>
+    <legend>Contato no rodapé</legend>
+    <label>E-mail<input name="contato_email" type="email" value="<%= cfg.contato_email %>" maxlength="200"></label>
+    <label>Endereço<textarea name="contato_endereco" rows="3" maxlength="500"><%= cfg.contato_endereco %></textarea></label>
+  </fieldset>
+  <fieldset>
+    <legend>Redes sociais</legend>
+    <p class="nota">Os ícones aparecem no topo e no rodapé do site. Deixe em branco a rede que não for usar.</p>
+    <label>Facebook<input name="social_facebook" type="url" value="<%= cfg.social_facebook %>" maxlength="300" placeholder="https://www.facebook.com/..."></label>
+    <label>Instagram<input name="social_instagram" type="url" value="<%= cfg.social_instagram %>" maxlength="300" placeholder="https://www.instagram.com/..."></label>
+    <label>LinkedIn<input name="social_linkedin" type="url" value="<%= cfg.social_linkedin %>" maxlength="300" placeholder="https://www.linkedin.com/..."></label>
+  </fieldset>
+  <div class="barra"><button class="botao">Salvar alterações</button></div>
+</form>
+<%- include('_fim') %>
